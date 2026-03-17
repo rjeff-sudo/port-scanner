@@ -8,13 +8,12 @@ import (
 	"strings"
 	"time"
 
-	"port-scanner/scanner"
+	"port-scanner/monitor"
 )
 
 func parsePorts(input string) ([]int, error) {
 	var ports []int
 
-	// Handle range like "1-1024"
 	if strings.Contains(input, "-") {
 		parts := strings.Split(input, "-")
 		if len(parts) != 2 {
@@ -34,7 +33,6 @@ func parsePorts(input string) ([]int, error) {
 		return ports, nil
 	}
 
-	// Handle comma-separated like "80,443,8080"
 	for _, p := range strings.Split(input, ",") {
 		port, err := strconv.Atoi(strings.TrimSpace(p))
 		if err != nil || port < 1 || port > 65535 {
@@ -47,43 +45,33 @@ func parsePorts(input string) ([]int, error) {
 }
 
 func main() {
-	// CLI flags
-	target  := flag.String("target", "", "IP address or range (e.g. 192.168.1.1 or 192.168.1.1-192.168.1.10)")
-	ports   := flag.String("ports", "1-1024", "Port range or list (e.g. 1-1024 or 80,443,8080)")
-	workers := flag.Int("workers", 100, "Number of concurrent workers")
-	timeout := flag.Int("timeout", 1, "Connection timeout in seconds")
+	target    := flag.String("target", "", "IP or range (e.g. 192.168.89.1-192.168.89.254)")
+	ports     := flag.String("ports", "22,80,443", "Ports to monitor (e.g. 22,80,443 or 1-1024)")
+	workers   := flag.Int("workers", 100, "Number of concurrent workers")
+	timeout   := flag.Int("timeout", 1, "Connection timeout in seconds")
+	interval  := flag.Int("interval", 60, "Scan interval in seconds")
+	stateFile := flag.String("state", "network_state.json", "File to store network state")
 
 	flag.Parse()
 
-	// Validate target
 	if *target == "" {
 		fmt.Println("Error: -target is required")
 		flag.Usage()
 		os.Exit(1)
 	}
 
-	// Parse IPs
-	ips, err := scanner.ParseIPs(*target)
-	if err != nil {
-		fmt.Printf("Error parsing target: %v\n", err)
-		os.Exit(1)
-	}
-
-	// Parse ports
 	portList, err := parsePorts(*ports)
 	if err != nil {
 		fmt.Printf("Error parsing ports: %v\n", err)
 		os.Exit(1)
 	}
 
-	fmt.Printf("\nScanning %d IP(s) across %d port(s) with %d workers...\n",
-		len(ips), len(portList), *workers)
-
-	// Run the scan
-	results := scanner.RunWorkerPool(ips, portList, *workers, time.Duration(*timeout)*time.Second)
-
-	// Print results
-	scanner.PrintResults(results)
-
-	fmt.Printf("\nScan complete. %d total probes.\n", len(results))
+	monitor.Run(
+		*target,
+		portList,
+		*workers,
+		time.Duration(*timeout)*time.Second,
+		time.Duration(*interval)*time.Second,
+		*stateFile,
+	)
 }
