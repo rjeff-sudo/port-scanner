@@ -10,17 +10,20 @@ import (
 
 // Snapshot represents the network state at a point in time
 type Snapshot struct {
-	Timestamp time.Time        `json:"timestamp"`
-	Devices   map[string][]int `json:"devices"` // IP → list of open ports
+	Timestamp time.Time                       `json:"timestamp"`
+	Devices   map[string]map[int]string       `json:"devices"` // IP → port → banner
 }
 
 // NewSnapshot creates a snapshot from scan results
 func NewSnapshot(results []scanner.Result) Snapshot {
-	devices := make(map[string][]int)
+	devices := make(map[string]map[int]string)
 
 	for _, r := range results {
 		if r.Status == "open" {
-			devices[r.IP] = append(devices[r.IP], r.Port)
+			if devices[r.IP] == nil {
+				devices[r.IP] = make(map[int]string)
+			}
+			devices[r.IP][r.Port] = r.Banner
 		}
 	}
 

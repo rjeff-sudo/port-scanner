@@ -12,59 +12,68 @@ type Change struct {
 	Type   string
 	IP     string
 	Port   int
+	Banner string
 }
 
 // Compare takes two snapshots and returns what changed between them
 func Compare(baseline, current Snapshot) []Change {
 	var changes []Change
 
+	// Check for new devices and new ports on existing devices
 	for ip, ports := range current.Devices {
 		baselinePorts, existed := baseline.Devices[ip]
 
 		if !existed {
-			for _, port := range ports {
+			// Entire device is new
+			for port, banner := range ports {
 				changes = append(changes, Change{
-					Type: "new_device",
-					IP:   ip,
-					Port: port,
+					Type:   "new_device",
+					IP:     ip,
+					Port:   port,
+					Banner: banner,
 				})
 			}
 			continue
 		}
 
-		baselinePortSet := toSet(baselinePorts)
-		for _, port := range ports {
-			if !baselinePortSet[port] {
+		// Device existed — check for new ports
+		for port, banner := range ports {
+			if _, wasOpen := baselinePorts[port]; !wasOpen {
 				changes = append(changes, Change{
-					Type: "new_port",
-					IP:   ip,
-					Port: port,
+					Type:   "new_port",
+					IP:     ip,
+					Port:   port,
+					Banner: banner,
 				})
 			}
 		}
 	}
 
+	// Check for lost devices and closed ports
 	for ip, baselinePorts := range baseline.Devices {
 		currentPorts, stillExists := current.Devices[ip]
 
 		if !stillExists {
-			for _, port := range baselinePorts {
+			// Entire device disappeared
+			for port, banner := range baselinePorts {
 				changes = append(changes, Change{
-					Type: "lost_device",
-					IP:   ip,
-					Port: port,
+					Type:   "lost_device",
+					IP:     ip,
+					Port:   port,
+					Banner: banner,
 				})
 			}
 			continue
 		}
 
-		currentPortSet := toSet(currentPorts)
-		for _, port := range baselinePorts {
-			if !currentPortSet[port] {
+		// Device still exists — check for closed ports
+		for port, banner := range baselinePorts {
+			if _, stillOpen := currentPorts[port]; !stillOpen {
 				changes = append(changes, Change{
-					Type: "closed_port",
-					IP:   ip,
-					Port: port,
+					Type:   "closed_port",
+					IP:     ip,
+					Port:   port,
+					Banner: banner,
 				})
 			}
 		}
@@ -76,15 +85,20 @@ func Compare(baseline, current Snapshot) []Change {
 // PrintChanges displays detected changes with clear labels
 func PrintChanges(changes []Change) {
 	for _, c := range changes {
+		banner := ""
+		if c.Banner != "" {
+			banner = " -> " + c.Banner
+		}
+
 		switch c.Type {
 		case "new_device":
-			fmt.Printf("  [NEW DEVICE]   %s:%d\n", c.IP, c.Port)
+			fmt.Printf("  [NEW DEVICE]   %s:%d%s\n", c.IP, c.Port, banner)
 		case "lost_device":
-			fmt.Printf("  [LOST DEVICE]  %s:%d\n", c.IP, c.Port)
+			fmt.Printf("  [LOST DEVICE]  %s:%d%s\n", c.IP, c.Port, banner)
 		case "new_port":
-			fmt.Printf("  [NEW PORT]     %s:%d just opened\n", c.IP, c.Port)
+			fmt.Printf("  [NEW PORT]     %s:%d%s just opened\n", c.IP, c.Port, banner)
 		case "closed_port":
-			fmt.Printf("  [PORT CLOSED]  %s:%d just closed\n", c.IP, c.Port)
+			fmt.Printf("  [PORT CLOSED]  %s:%d%s just closed\n", c.IP, c.Port, banner)
 		}
 	}
 }
@@ -134,13 +148,4 @@ func Run(target string, ports []int, workers int, timeout time.Duration, interva
 		baseline = current
 		SaveSnapshot(baseline, stateFile)
 	}
-}
-
-// toSet converts a slice of ints into a map for O(1) lookup
-func toSet(ports []int) map[int]bool {
-	set := make(map[int]bool)
-	for _, p := range ports {
-		set[p] = true
-	}
-	return set
 }
