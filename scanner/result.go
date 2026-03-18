@@ -7,6 +7,7 @@ type Result struct {
 	Port   int
 	Status string
 	Banner string // new
+	Hostname string
 }
 
 func PrintResults(results []Result) {

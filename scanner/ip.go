@@ -51,3 +51,14 @@ func generateIPRange(startIP, endIP string) ([]string, error) {
 
 	return ips, nil
 }
+
+// LookupHostname does a reverse DNS lookup on an IP
+// Returns the hostname or empty string if none found
+func LookupHostname(ip string) string {
+	hostnames, err := net.LookupAddr(ip)
+	if err != nil || len(hostnames) == 0 {
+		return ""
+	}
+	// LookupAddr returns FQDNs with trailing dot — trim it
+	return strings.TrimSuffix(hostnames[0], ".")
+}

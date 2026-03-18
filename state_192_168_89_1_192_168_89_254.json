@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-03-18T15:22:58.727343231+03:00",
+  "timestamp": "2026-03-18T16:02:40.785623804+03:00",
   "devices": {
     "192.168.89.104": {
       "22": "SSH-2.0-OpenSSH_9.6p1 Ubuntu-3ubuntu13.14",
@@ -13,9 +13,8 @@
       "22": "SSH-2.0-OpenSSH_9.6p1 Ubuntu-3ubuntu13.15",
       "80": "Server: Apache/2.4.58 (Ubuntu)"
     },
-    "192.168.89.110": {
-      "22": "SSH-2.0-OpenSSH_9.6p1 Ubuntu-3ubuntu13.15",
-      "80": "Server: Apache/2.4.58 (Ubuntu)"
+    "192.168.89.117": {
+      "22": "SSH-2.0-OpenSSH_8.9p1 Ubuntu-3ubuntu0.13"
     },
     "192.168.89.119": {
       "22": "SSH-2.0-OpenSSH_9.6p1 Ubuntu-3ubuntu13.14",
@@ -36,10 +35,6 @@
     "192.168.89.13": {
       "22": "SSH-2.0-OpenSSH_9.2p1 Debian-2+deb12u7"
     },
-    "192.168.89.135": {
-      "22": "SSH-2.0-OpenSSH_9.6p1 Ubuntu-3ubuntu13.15",
-      "80": "Server: Apache/2.4.58 (Ubuntu)"
-    },
     "192.168.89.137": {
       "22": "SSH-2.0-OpenSSH_9.6p1 Ubuntu-3ubuntu13.15",
       "80": "Server: Apache/2.4.58 (Ubuntu)"
@@ -54,7 +49,7 @@
     "192.168.89.140": {
       "22": "SSH-2.0-OpenSSH_9.6p1 Ubuntu-3ubuntu13.14"
     },
-    "192.168.89.149": {
+    "192.168.89.151": {
       "22": "SSH-2.0-OpenSSH_9.6p1 Ubuntu-3ubuntu13.14",
       "80": "Server: Apache/2.4.58 (Ubuntu)"
     },
@@ -66,6 +61,10 @@
       "22": "SSH-2.0-OpenSSH_9.6p1 Ubuntu-3ubuntu13.14",
       "80": "Server: Apache/2.4.58 (Ubuntu)"
     },
+    "192.168.89.164": {
+      "22": "SSH-2.0-OpenSSH_9.6p1 Ubuntu-3ubuntu13.15",
+      "80": "Server: Apache/2.4.58 (Ubuntu)"
+    },
     "192.168.89.165": {
       "22": "SSH-2.0-dropbear_2015.67",
       "443": "",
@@ -75,10 +74,6 @@
       "22": "SSH-2.0-dropbear_2015.67",
       "443": "",
       "80": "Server: GoAhead-Webs"
-    },
-    "192.168.89.170": {
-      "22": "SSH-2.0-OpenSSH_9.6p1 Ubuntu-3ubuntu13.15",
-      "80": "Server: Apache/2.4.58 (Ubuntu)"
     },
     "192.168.89.175": {
       "22": "SSH-2.0-OpenSSH_9.6p1 Ubuntu-3ubuntu13.14",
@@ -92,15 +87,7 @@
       "22": "SSH-2.0-OpenSSH_9.6p1 Ubuntu-3ubuntu13.12",
       "80": "Server: Apache/2.4.58 (Ubuntu)"
     },
-    "192.168.89.190": {
-      "22": "SSH-2.0-OpenSSH_9.6p1 Ubuntu-3ubuntu13.12",
-      "80": "Server: Apache/2.4.58 (Ubuntu)"
-    },
-    "192.168.89.195": {
-      "22": "SSH-2.0-OpenSSH_9.6p1 Ubuntu-3ubuntu13.12",
-      "80": "Server: Apache/2.4.58 (Ubuntu)"
-    },
-    "192.168.89.199": {
+    "192.168.89.198": {
       "22": "SSH-2.0-OpenSSH_9.6p1 Ubuntu-3ubuntu13.15",
       "80": "Server: Apache/2.4.58 (Ubuntu)"
     },
@@ -108,16 +95,15 @@
       "22": "SSH-2.0-ROSSSH",
       "80": ""
     },
-    "192.168.89.20": {
-      "22": "SSH-2.0-OpenSSH_9.6p1 Ubuntu-3ubuntu13.15",
-      "80": "Server: Apache/2.4.58 (Ubuntu)"
-    },
     "192.168.89.203": {
       "22": "SSH-2.0-OpenSSH_9.6p1 Ubuntu-3ubuntu13.15",
       "80": "Server: Apache/2.4.58 (Ubuntu)"
     },
-    "192.168.89.214": {
-      "22": "SSH-2.0-OpenSSH_9.6p1 Ubuntu-3ubuntu13.12",
+    "192.168.89.211": {
+      "22": "SSH-2.0-OpenSSH_9.6p1 Ubuntu-3ubuntu13.14"
+    },
+    "192.168.89.216": {
+      "22": "SSH-2.0-OpenSSH_9.6p1 Ubuntu-3ubuntu13.15",
       "80": "Server: Apache/2.4.58 (Ubuntu)"
     },
     "192.168.89.218": {
@@ -135,16 +121,8 @@
       "22": "SSH-2.0-OpenSSH_9.6p1 Ubuntu-3ubuntu13.12",
       "80": "Server: Apache/2.4.58 (Ubuntu)"
     },
-    "192.168.89.227": {
-      "22": "SSH-2.0-OpenSSH_9.6p1 Ubuntu-3ubuntu13.15",
-      "80": "Server: Apache/2.4.58 (Ubuntu)"
-    },
     "192.168.89.229": {
       "22": "SSH-2.0-OpenSSH_9.6p1 Ubuntu-3ubuntu13.15",
-      "80": "Server: Apache/2.4.58 (Ubuntu)"
-    },
-    "192.168.89.23": {
-      "22": "SSH-2.0-OpenSSH_9.6p1 Ubuntu-3ubuntu13.12",
       "80": "Server: Apache/2.4.58 (Ubuntu)"
     },
     "192.168.89.231": {
@@ -152,10 +130,6 @@
     },
     "192.168.89.233": {
       "22": "SSH-2.0-OpenSSH_9.6p1 Ubuntu-3ubuntu13.12",
-      "80": "Server: Apache/2.4.58 (Ubuntu)"
-    },
-    "192.168.89.237": {
-      "22": "SSH-2.0-OpenSSH_9.6p1 Ubuntu-3ubuntu13.15",
       "80": "Server: Apache/2.4.58 (Ubuntu)"
     },
     "192.168.89.249": {
@@ -203,6 +177,10 @@
       "22": "SSH-2.0-OpenSSH_9.6p1 Ubuntu-3ubuntu13.15",
       "80": "Server: Apache/2.4.58 (Ubuntu)"
     },
+    "192.168.89.44": {
+      "22": "SSH-2.0-OpenSSH_9.6p1 Ubuntu-3ubuntu13.15",
+      "80": "Server: Apache/2.4.58 (Ubuntu)"
+    },
     "192.168.89.46": {
       "22": "SSH-2.0-OpenSSH_9.6p1 Ubuntu-3ubuntu13.15",
       "80": "Server: Apache/2.4.58 (Ubuntu)"
@@ -243,11 +221,15 @@
       "22": "SSH-2.0-OpenSSH_9.6p1 Ubuntu-3ubuntu13.15",
       "80": "Server: Apache/2.4.58 (Ubuntu)"
     },
+    "192.168.89.77": {
+      "22": "SSH-2.0-OpenSSH_9.6p1 Ubuntu-3ubuntu13.15",
+      "80": "Server: Apache/2.4.58 (Ubuntu)"
+    },
     "192.168.89.79": {
       "22": "SSH-2.0-OpenSSH_9.6p1 Ubuntu-3ubuntu13.15",
       "80": "Server: Apache/2.4.58 (Ubuntu)"
     },
-    "192.168.89.85": {
+    "192.168.89.86": {
       "22": "SSH-2.0-OpenSSH_9.6p1 Ubuntu-3ubuntu13.15",
       "80": "Server: Apache/2.4.58 (Ubuntu)"
     },

@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"net"
+	"os/exec"
 	"strings"
 	"sync"
 	"time"
@@ -47,6 +48,14 @@ func GrabBanner(conn net.Conn, timeout time.Duration) string {
 	return ""
 }
 
+// PingHost checks if a host is alive using system ping
+// Returns true if host responds, false if unreachable
+func PingHost(ip string) bool {
+	cmd := exec.Command("ping", "-c", "1", "-W", "1", ip)
+	err := cmd.Run()
+	return err == nil
+}
+
 // ScanPort attempts a TCP connection and grabs a banner if port is open
 func ScanPort(ip string, port int, timeout time.Duration) Result {
 	address := fmt.Sprintf("%s:%d", ip, port)
@@ -61,7 +70,8 @@ func ScanPort(ip string, port int, timeout time.Duration) Result {
 	defer conn.Close()
 
 	banner := GrabBanner(conn, timeout)
-	return Result{IP: ip, Port: port, Status: "open", Banner: banner}
+	hostname := LookupHostname(ip) // new
+	return Result{IP: ip, Port: port, Status: "open", Banner: banner, Hostname: hostname}
 }
 
 // RunWorkerPool spins up a pool of goroutines to scan concurrently

@@ -50,9 +50,14 @@ func main() {
 	workers   := flag.Int("workers", 100, "Number of concurrent workers")
 	timeout   := flag.Int("timeout", 1, "Connection timeout in seconds")
 	interval  := flag.Int("interval", 60, "Scan interval in seconds")
-	stateFile := flag.String("state", "network_state.json", "File to store network state")
+	stateFile := flag.String("state", "", "File to store network state (default: auto-named from target IP)")
 
 	flag.Parse()
+	// Auto-generate state filename from target if not provided
+    if *stateFile == "" {
+       safe := strings.NewReplacer(".", "_", "/", "_", "-", "_").Replace(*target)
+       *stateFile = "state_" + safe + ".json"
+    }
 
 	if *target == "" {
 		fmt.Println("Error: -target is required")

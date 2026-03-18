@@ -106,7 +106,7 @@ func PrintChanges(changes []Change) {
 // Run starts the monitoring loop
 func Run(target string, ports []int, workers int, timeout time.Duration, interval time.Duration, stateFile string) {
 	fmt.Printf("\n--- Network Monitor Started ---\n")
-	fmt.Printf("Target: %s | Interval: %v\n\n", target, interval)
+	fmt.Printf("Target: %s | Interval: %v | State: %s\n\n", target, interval, stateFile)
 
 	ips, err := scanner.ParseIPs(target)
 	if err != nil {
