@@ -8,6 +8,8 @@ import (
 	"strings"
 	"sync"
 	"time"
+
+	"github.com/schollz/progressbar/v3"
 )
 
 type Job struct {
@@ -74,10 +76,24 @@ func ScanPort(ip string, port int, timeout time.Duration) Result {
 	return Result{IP: ip, Port: port, Status: "open", Banner: banner, Hostname: hostname}
 }
 
-// RunWorkerPool spins up a pool of goroutines to scan concurrently
 func RunWorkerPool(ips []string, ports []int, workers int, timeout time.Duration) []Result {
-	jobs := make(chan Job, len(ips)*len(ports))
-	results := make(chan Result, len(ips)*len(ports))
+	total := len(ips) * len(ports)
+	jobs := make(chan Job, total)
+	results := make(chan Result, total)
+
+	bar := progressbar.NewOptions(total,
+		progressbar.OptionSetDescription("Scanning..."),
+		progressbar.OptionSetTheme(progressbar.Theme{
+			Saucer:        "=",
+			SaucerHead:    ">",
+			SaucerPadding: " ",
+			BarStart:      "[",
+			BarEnd:        "]",
+		}),
+		progressbar.OptionShowCount(),
+		progressbar.OptionSetWidth(40),
+		progressbar.OptionClearOnFinish(),
+	)
 
 	var wg sync.WaitGroup
 
@@ -87,6 +103,7 @@ func RunWorkerPool(ips []string, ports []int, workers int, timeout time.Duration
 			defer wg.Done()
 			for job := range jobs {
 				results <- ScanPort(job.IP, job.Port, timeout)
+				bar.Add(1)
 			}
 		}()
 	}
