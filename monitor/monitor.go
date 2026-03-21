@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"port-scanner/scanner"
+	"github.com/fatih/color"
 )
 
 // Change represents a single detected change on the network
@@ -84,6 +85,10 @@ func Compare(baseline, current Snapshot) []Change {
 
 // PrintChanges displays detected changes with clear labels
 func PrintChanges(changes []Change) {
+	green  := color.New(color.FgGreen).SprintfFunc()
+	red    := color.New(color.FgRed).SprintfFunc()
+	yellow := color.New(color.FgYellow).SprintfFunc()
+
 	for _, c := range changes {
 		banner := ""
 		if c.Banner != "" {
@@ -92,13 +97,13 @@ func PrintChanges(changes []Change) {
 
 		switch c.Type {
 		case "new_device":
-			fmt.Printf("  [NEW DEVICE]   %s:%d%s\n", c.IP, c.Port, banner)
+			fmt.Printf("  %s %s:%d%s\n", yellow("[NEW DEVICE]"), c.IP, c.Port, banner)
 		case "lost_device":
-			fmt.Printf("  [LOST DEVICE]  %s:%d%s\n", c.IP, c.Port, banner)
+			fmt.Printf("  %s %s:%d%s\n", red("[LOST DEVICE]"), c.IP, c.Port, banner)
 		case "new_port":
-			fmt.Printf("  [NEW PORT]     %s:%d%s just opened\n", c.IP, c.Port, banner)
+			fmt.Printf("  %s %s:%d%s just opened\n", yellow("[NEW PORT]"), c.IP, c.Port, banner)
 		case "closed_port":
-			fmt.Printf("  [PORT CLOSED]  %s:%d%s just closed\n", c.IP, c.Port, banner)
+			fmt.Printf("  %s %s:%d%s just closed\n", green("[PORT CLOSED]"), c.IP, c.Port, banner)
 		}
 	}
 }
