@@ -46,23 +46,23 @@ func parsePorts(input string) ([]int, error) {
 
 func main() {
 	target    := flag.String("target", "", "IP or range (e.g. 192.168.89.1-192.168.89.254)")
-	ports     := flag.String("ports", "22,80,443", "Ports to monitor (e.g. 22,80,443 or 1-1024)")
+	ports     := flag.String("ports", "22,80,443", "Ports to monitor")
 	workers   := flag.Int("workers", 100, "Number of concurrent workers")
 	timeout   := flag.Int("timeout", 1, "Connection timeout in seconds")
 	interval  := flag.Int("interval", 60, "Scan interval in seconds")
-	stateFile := flag.String("state", "", "File to store network state (default: auto-named from target IP)")
+	stateFile := flag.String("state", "", "File to store network state (default: auto-named)")
 
 	flag.Parse()
-	// Auto-generate state filename from target if not provided
-    if *stateFile == "" {
-       safe := strings.NewReplacer(".", "_", "/", "_", "-", "_").Replace(*target)
-       *stateFile = "state_" + safe + ".json"
-    }
 
 	if *target == "" {
 		fmt.Println("Error: -target is required")
 		flag.Usage()
 		os.Exit(1)
+	}
+
+	if *stateFile == "" {
+		safe := strings.NewReplacer(".", "_", "/", "_", "-", "_").Replace(*target)
+		*stateFile = "state_" + safe + ".json"
 	}
 
 	portList, err := parsePorts(*ports)
