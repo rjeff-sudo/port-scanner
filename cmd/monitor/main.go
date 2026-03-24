@@ -9,9 +9,15 @@ import (
 	"time"
 
 	"port-scanner/monitor"
+	"port-scanner/scanner"
 )
 
 func parsePorts(input string) ([]int, error) {
+	// check for named profile first
+	if profile, ok := scanner.PortProfiles[input]; ok {
+		return profile, nil
+	}
+
 	var ports []int
 
 	if strings.Contains(input, "-") {
@@ -46,7 +52,7 @@ func parsePorts(input string) ([]int, error) {
 
 func main() {
 	target    := flag.String("target", "", "IP or range (e.g. 192.168.89.1-192.168.89.254)")
-	ports     := flag.String("ports", "22,80,443", "Ports to monitor")
+	ports     := flag.String("ports", "common", "Ports: range, list, or profile (common, web, db, ssh)")
 	workers   := flag.Int("workers", 100, "Number of concurrent workers")
 	timeout   := flag.Int("timeout", 1, "Connection timeout in seconds")
 	interval  := flag.Int("interval", 60, "Scan interval in seconds")
@@ -56,6 +62,7 @@ func main() {
 
 	if *target == "" {
 		fmt.Println("Error: -target is required")
+		fmt.Println("\nPort profiles available: common, web, db, ssh")
 		flag.Usage()
 		os.Exit(1)
 	}

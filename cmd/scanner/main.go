@@ -12,6 +12,11 @@ import (
 )
 
 func parsePorts(input string) ([]int, error) {
+	// check for named profile first
+	if profile, ok := scanner.PortProfiles[input]; ok {
+		return profile, nil
+	}
+
 	var ports []int
 
 	if strings.Contains(input, "-") {
@@ -45,15 +50,19 @@ func parsePorts(input string) ([]int, error) {
 }
 
 func main() {
-	target  := flag.String("target", "", "IP or range (e.g. 192.168.89.1-192.168.89.254)")
-	ports   := flag.String("ports", "1-1024", "Ports to scan (e.g. 1-1024 or 80,443,8080)")
-	workers := flag.Int("workers", 100, "Number of concurrent workers")
-	timeout := flag.Int("timeout", 1, "Connection timeout in seconds")
+	target   := flag.String("target", "", "IP or range (e.g. 192.168.89.1-192.168.89.254)")
+	ports    := flag.String("ports", "common", "Ports: range, list, or profile (common, web, db, ssh)")
+	workers  := flag.Int("workers", 100, "Number of concurrent workers")
+	timeout  := flag.Int("timeout", 1, "Connection timeout in seconds")
+	verbose  := flag.Bool("v", false, "Show closed ports too")
+	vverbose := flag.Bool("vv", false, "Show all ports including filtered")
+	output   := flag.String("output", "", "Save results to file (e.g. results.json, results.csv, results.txt)")
 
 	flag.Parse()
 
 	if *target == "" {
 		fmt.Println("Error: -target is required")
+		fmt.Println("\nPort profiles available: common, web, db, ssh")
 		flag.Usage()
 		os.Exit(1)
 	}
@@ -70,11 +79,30 @@ func main() {
 		os.Exit(1)
 	}
 
+	// determine verbosity level
+	verbosity := 0
+	if *verbose {
+		verbosity = 1
+	}
+	if *vverbose {
+		verbosity = 2
+	}
+
 	fmt.Printf("\nScanning %d IP(s) across %d port(s) with %d workers...\n",
 		len(ips), len(portList), *workers)
 
 	results := scanner.RunWorkerPool(ips, portList, *workers, time.Duration(*timeout)*time.Second)
-	scanner.PrintResults(results)
+	scanner.PrintResults(results, verbosity)
+
+	// save to file if requested
+	if *output != "" {
+		err := scanner.SaveResults(results, *output)
+		if err != nil {
+			fmt.Printf("Error saving results: %v\n", err)
+		} else {
+			fmt.Printf("\nResults saved to %s\n", *output)
+		}
+	}
 
 	fmt.Printf("\nScan complete. %d total probes.\n", len(results))
 }
