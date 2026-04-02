@@ -44,9 +44,15 @@ type DeviceSummary struct {
 // AuditResults takes scanner results and returns a full ScanReport
 func AuditResults(target string, results []ScannerResult) ScanReport {
 	report := ScanReport{
-		Target:    target,
-		ScannedAt: time.Now(),
-	}
+      Target:     target,
+      ScannedAt:  time.Now(),
+      Critical:   []Finding{},
+      High:       []Finding{},
+      Medium:     []Finding{},
+      Low:        []Finding{},
+      Info:       []Finding{},
+      AllDevices: []DeviceSummary{},
+    }
 
 	deviceMap := make(map[string]*DeviceSummary)
 

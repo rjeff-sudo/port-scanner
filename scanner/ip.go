@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net"
 	"strings"
+	"strconv"
 )
 
 // ParseIPs takes a string input and returns a slice of IP strings
@@ -61,4 +62,39 @@ func LookupHostname(ip string) string {
 	}
 	// LookupAddr returns FQDNs with trailing dot — trim it
 	return strings.TrimSuffix(hostnames[0], ".")
+}
+
+// ParsePorts parses a port string into a slice of ints
+// supports: comma-separated (22,80,443), ranges (1-1024), or named profiles
+func ParsePorts(input string) ([]int, error) {
+	if profile, ok := PortProfiles[input]; ok {
+		return profile, nil
+	}
+	var ports []int
+	if strings.Contains(input, "-") {
+		parts := strings.Split(input, "-")
+		if len(parts) != 2 {
+			return nil, fmt.Errorf("invalid port range: %s", input)
+		}
+		start, err1 := strconv.Atoi(parts[0])
+		end, err2 := strconv.Atoi(parts[1])
+		if err1 != nil || err2 != nil {
+			return nil, fmt.Errorf("invalid port numbers in range: %s", input)
+		}
+		if start < 1 || end > 65535 || start > end {
+			return nil, fmt.Errorf("port range must be between 1-65535")
+		}
+		for i := start; i <= end; i++ {
+			ports = append(ports, i)
+		}
+		return ports, nil
+	}
+	for _, p := range strings.Split(input, ",") {
+		port, err := strconv.Atoi(strings.TrimSpace(p))
+		if err != nil || port < 1 || port > 65535 {
+			return nil, fmt.Errorf("invalid port: %s", p)
+		}
+		ports = append(ports, port)
+	}
+	return ports, nil
 }
