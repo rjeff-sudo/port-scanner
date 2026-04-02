@@ -16,16 +16,18 @@ type Result struct {
 	Status   string
 	Banner   string
 	Hostname string
+	OS       string
 }
 
 // PrintResults prints results as a sorted table
 // verbosity: 0 = open only, 1 = open+closed, 2 = all
 func PrintResults(results []Result, verbosity int) {
-	green  := color.New(color.FgGreen).SprintfFunc()
-	red    := color.New(color.FgRed).SprintfFunc()
-	yellow := color.New(color.FgYellow).SprintfFunc()
-	cyan   := color.New(color.FgCyan).SprintfFunc()
-	grey   := color.New(color.FgWhite).SprintfFunc()
+	green   := color.New(color.FgGreen).SprintfFunc()
+	red     := color.New(color.FgRed).SprintfFunc()
+	yellow  := color.New(color.FgYellow).SprintfFunc()
+	cyan    := color.New(color.FgCyan).SprintfFunc()
+	grey    := color.New(color.FgWhite).SprintfFunc()
+	magenta := color.New(color.FgMagenta).SprintfFunc()
 
 	// filter based on verbosity
 	var filtered []Result
@@ -59,16 +61,18 @@ func PrintResults(results []Result, verbosity int) {
 
 	// print table header
 	fmt.Println()
-	fmt.Printf("%-20s %-16s %-8s %-10s %s\n",
+	fmt.Printf("%-20s %-16s %-6s %-10s %-30s %s\n",
 		cyan("HOST"),
 		cyan("IP"),
 		cyan("PORT"),
 		cyan("STATUS"),
 		cyan("SERVICE"),
+		cyan("OS"),
 	)
-	fmt.Println("────────────────────────────────────────────────────────────────────────────")
+	fmt.Println("──────────────────────────────────────────────────────────────────────────────────────────")
 
 	// print each row
+	lastIP := ""
 	for _, r := range filtered {
 		host := "-"
 		if r.Hostname != "" {
@@ -78,6 +82,11 @@ func PrintResults(results []Result, verbosity int) {
 		banner := "-"
 		if r.Banner != "" {
 			banner = r.Banner
+		}
+
+		os := "-"
+		if r.OS != "" {
+			os = r.OS
 		}
 
 		var statusStr string
@@ -90,13 +99,26 @@ func PrintResults(results []Result, verbosity int) {
 			statusStr = grey("filtered")
 		}
 
-		fmt.Printf("%-20s %-16s %-8s %-18s %s\n",
-			host,
-			r.IP,
-			green(fmt.Sprintf("%d", r.Port)),
-			statusStr,
-			yellow(banner),
-		)
+		// only show IP and host once per device
+		if r.IP == lastIP {
+			host = ""
+			fmt.Printf("%-20s %-16s %-6s %-18s %-30s %s\n",
+				host, "",
+				green(fmt.Sprintf("%d", r.Port)),
+				statusStr,
+				yellow(banner),
+				magenta(os),
+			)
+		} else {
+			fmt.Printf("%-20s %-16s %-6s %-18s %-30s %s\n",
+				host, r.IP,
+				green(fmt.Sprintf("%d", r.Port)),
+				statusStr,
+				yellow(banner),
+				magenta(os),
+			)
+		}
+		lastIP = r.IP
 	}
 
 	// count open ports
@@ -107,7 +129,7 @@ func PrintResults(results []Result, verbosity int) {
 		}
 	}
 
-	fmt.Println("────────────────────────────────────────────────────────────────────────────")
+	fmt.Println("──────────────────────────────────────────────────────────────────────────────────────────")
 	fmt.Printf("Found %s open port(s) across %s host(s)\n",
 		green(fmt.Sprintf("%d", openCount)),
 		green(fmt.Sprintf("%d", countUniqueIPs(filtered))),
@@ -116,38 +138,33 @@ func PrintResults(results []Result, verbosity int) {
 
 // SaveResults saves results to a file in txt, json or csv format
 func SaveResults(results []Result, filepath string) error {
-	// determine format from extension
 	var content string
-
 	if strings.HasSuffix(filepath, ".json") {
 		data, err := json.MarshalIndent(results, "", "  ")
 		if err != nil {
 			return err
 		}
 		content = string(data)
-
 	} else if strings.HasSuffix(filepath, ".csv") {
 		var sb strings.Builder
-		sb.WriteString("IP,Hostname,Port,Status,Banner\n")
+		sb.WriteString("IP,Hostname,Port,Status,Banner,OS\n")
 		for _, r := range results {
 			if r.Status == "open" {
-				sb.WriteString(fmt.Sprintf("%s,%s,%d,%s,%s\n",
-					r.IP, r.Hostname, r.Port, r.Status, r.Banner))
+				sb.WriteString(fmt.Sprintf("%s,%s,%d,%s,%s,%s\n",
+					r.IP, r.Hostname, r.Port, r.Status, r.Banner, r.OS))
 			}
 		}
 		content = sb.String()
-
 	} else {
-		// plain text
 		var sb strings.Builder
 		for _, r := range results {
 			if r.Status == "open" {
-				sb.WriteString(fmt.Sprintf("[OPEN] %s:%d → %s\n", r.IP, r.Port, r.Banner))
+				sb.WriteString(fmt.Sprintf("[OPEN] %s:%d → %s | %s\n",
+					r.IP, r.Port, r.Banner, r.OS))
 			}
 		}
 		content = sb.String()
 	}
-
 	return os.WriteFile(filepath, []byte(content), 0644)
 }
 

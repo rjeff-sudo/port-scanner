@@ -57,6 +57,7 @@ func main() {
 	verbose  := flag.Bool("v", false, "Show closed ports too")
 	vverbose := flag.Bool("vv", false, "Show all ports including filtered")
 	output   := flag.String("output", "", "Save results to file (e.g. results.json, results.csv, results.txt)")
+	rate := flag.Int("rate", 0, "Max probes per second (0 = unlimited)")
 
 	flag.Parse()
 
@@ -91,7 +92,7 @@ func main() {
 	fmt.Printf("\nScanning %d IP(s) across %d port(s) with %d workers...\n",
 		len(ips), len(portList), *workers)
 
-	results := scanner.RunWorkerPool(ips, portList, *workers, time.Duration(*timeout)*time.Second)
+	results := scanner.RunWorkerPool(ips, portList, *workers, time.Duration(*timeout)*time.Second, *rate)
 	scanner.PrintResults(results, verbosity)
 
 	// save to file if requested

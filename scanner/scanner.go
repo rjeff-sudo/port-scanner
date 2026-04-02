@@ -25,6 +25,32 @@ type Job struct {
 	Port int
 }
 
+// fastPorts are well known ports that respond quickly
+var fastPorts = map[int]bool{
+	22: true, 80: true, 443: true, 21: true,
+	25: true, 53: true, 23: true, 3306: true,
+	5432: true, 6379: true, 8080: true, 8443: true,
+}
+
+// portTimeout returns a shorter timeout for known ports
+func portTimeout(port int, defaultTimeout time.Duration) time.Duration {
+	if fastPorts[port] {
+		return 500 * time.Millisecond
+	}
+	return defaultTimeout
+}
+
+// OptimalWorkers calculates best worker count based on job size
+func OptimalWorkers(jobs int, requested int) int {
+	if requested > jobs {
+		return jobs
+	}
+	if requested > 500 {
+		return 500
+	}
+	return requested
+}
+
 // PingHost checks if a host is alive using system ping
 func PingHost(ip string) bool {
 	cmd := exec.Command("ping", "-c", "1", "-W", "1", ip)
@@ -35,6 +61,7 @@ func PingHost(ip string) bool {
 // GrabBanner attempts to grab a service banner from an open connection
 func GrabBanner(conn net.Conn, timeout time.Duration) string {
 	conn.SetReadDeadline(time.Now().Add(timeout))
+
 	reader := bufio.NewReader(conn)
 
 	banner, err := reader.ReadString('\n')
@@ -61,7 +88,11 @@ func GrabBanner(conn net.Conn, timeout time.Duration) string {
 
 // ScanPort attempts a TCP connection and grabs a banner if port is open
 func ScanPort(ip string, port int, timeout time.Duration) Result {
+	timeout  = portTimeout(port, timeout)
 	address := fmt.Sprintf("%s:%d", ip, port)
+      if strings.Contains(ip, ":") {
+         address = fmt.Sprintf("[%s]:%d", ip, port)
+      }
 	conn, err := net.DialTimeout("tcp", address, timeout)
 
 	if err != nil {
@@ -72,16 +103,29 @@ func ScanPort(ip string, port int, timeout time.Duration) Result {
 	}
 	defer conn.Close()
 
-	banner := GrabBanner(conn, timeout)
+	banner   := GrabBanner(conn, timeout)
 	hostname := LookupHostname(ip)
-	return Result{IP: ip, Port: port, Status: "open", Banner: banner, Hostname: hostname}
+	os       := DetectOS(banner)
+	return Result{IP: ip, Port: port, Status: "open", Banner: banner, Hostname: hostname, OS: os}
 }
 
 // RunWorkerPool spins up a pool of goroutines to scan concurrently
-func RunWorkerPool(ips []string, ports []int, workers int, timeout time.Duration) []Result {
-	total := len(ips) * len(ports)
-	jobs := make(chan Job, total)
+func RunWorkerPool(ips []string, ports []int, workers int, timeout time.Duration, rateLimit int) []Result {
+	total   := len(ips) * len(ports)
+	workers  = OptimalWorkers(total, workers)
+
+	jobs    := make(chan Job, total)
 	results := make(chan Result, total)
+
+	// Rate limiter
+	var rateLimiter <-chan time.Time
+	if rateLimit > 0 {
+		rateLimiter = time.NewTicker(time.Second / time.Duration(rateLimit)).C
+	} else {
+		ch := make(chan time.Time)
+		close(ch)
+		rateLimiter = ch
+	}
 
 	bar := progressbar.NewOptions(total,
 		progressbar.OptionSetDescription("Scanning..."),
@@ -104,6 +148,7 @@ func RunWorkerPool(ips []string, ports []int, workers int, timeout time.Duration
 		go func() {
 			defer wg.Done()
 			for job := range jobs {
+				<-rateLimiter
 				results <- ScanPort(job.IP, job.Port, timeout)
 				bar.Add(1)
 			}

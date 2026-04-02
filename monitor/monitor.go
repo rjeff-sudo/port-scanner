@@ -122,7 +122,7 @@ func Run(target string, ports []int, workers int, timeout time.Duration, interva
 	baseline, err := LoadSnapshot(stateFile)
 	if err != nil {
 		fmt.Println("[*] No previous state found. Establishing baseline...")
-		results := scanner.RunWorkerPool(ips, ports, workers, timeout)
+		results := scanner.RunWorkerPool(ips, ports, workers, timeout, 0)
 		baseline = NewSnapshot(results)
 		SaveSnapshot(baseline, stateFile)
 		fmt.Printf("[+] Baseline established — %d device(s) found\n\n", len(baseline.Devices))
@@ -138,7 +138,7 @@ func Run(target string, ports []int, workers int, timeout time.Duration, interva
 
 		fmt.Printf("[%s] Scanning...\n", time.Now().Format("15:04:05"))
 
-		results := scanner.RunWorkerPool(ips, ports, workers, timeout)
+		results := scanner.RunWorkerPool(ips, ports, workers, timeout, 0)
 		current := NewSnapshot(results)
 		changes := Compare(baseline, current)
 
