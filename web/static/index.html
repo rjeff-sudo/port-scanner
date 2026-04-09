@@ -1,276 +1,602 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>NetAudit — Network Security Scanner</title>
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>NetAudit — Network Security Scanner</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&family=Inter:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#05070f;
+  --surface:#0c0f1a;
+  --surface2:#111420;
+  --border:#1a1d2e;
+  --border2:#252840;
+  --text:#eef0f8;
+  --muted:#5a6080;
+  --muted2:#8892b0;
+  --accent:#4f6ef7;
+  --accent2:#7c94fa;
+  --accent3:#a5b4fc;
+  --green:#22c55e;
+  --red:#ef4444;
+  --amber:#f59e0b;
+}
 
-    body {
-      font-family: 'Segoe UI', sans-serif;
-      background: #0d1117;
-      color: #e6edf3;
-      min-height: 100vh;
-      padding: 40px 20px;
-    }
+html{scroll-behavior:smooth}
 
-    .container { max-width: 900px; margin: 0 auto; }
+body{
+  font-family:'Inter',sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  min-height:100vh;
+  overflow-x:hidden;
+}
 
-    header { text-align: center; margin-bottom: 40px; }
-    header h1 { font-size: 2.2rem; color: #58a6ff; }
-    header p { color: #8b949e; margin-top: 8px; }
+/* canvas background */
+#bg-canvas{
+  position:fixed;top:0;left:0;
+  width:100%;height:100%;
+  z-index:0;pointer-events:none;
+  opacity:.4;
+}
 
-    .card {
-      background: #161b22;
-      border: 1px solid #30363d;
-      border-radius: 8px;
-      padding: 24px;
-      margin-bottom: 24px;
-    }
+/* ───── NAV ───── */
+nav{
+  position:sticky;top:0;z-index:100;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:16px 64px;
+  background:rgba(5,7,15,.85);
+  backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--border);
+}
+.nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none}
+.nav-logo-icon{
+  width:34px;height:34px;border-radius:9px;
+  background:var(--accent);
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;
+}
+.nav-logo-icon svg{width:18px;height:18px;stroke:#fff;fill:none;stroke-width:2.2}
+.nav-logo-name{font-family:'Syne',sans-serif;font-size:1.1rem;font-weight:700;color:var(--text);letter-spacing:-.3px}
+.nav-links{display:flex;gap:36px}
+.nav-links a{color:var(--muted2);text-decoration:none;font-size:.875rem;font-weight:400;transition:color .2s}
+.nav-links a:hover{color:var(--text)}
+.nav-cta{
+  background:var(--accent);color:#fff;border:none;
+  padding:9px 22px;border-radius:8px;
+  font-family:'Syne',sans-serif;font-size:.875rem;font-weight:600;
+  cursor:pointer;transition:background .2s,transform .15s;
+  display:flex;align-items:center;gap:7px;
+}
+.nav-cta:hover{background:var(--accent2);transform:translateY(-1px)}
+.nav-cta svg{width:15px;height:15px;stroke:#fff;fill:none;stroke-width:2.2}
 
-    label { display: block; margin-bottom: 6px; color: #8b949e; font-size: 0.9rem; }
+/* ───── HERO ───── */
+.hero{
+  position:relative;z-index:5;
+  display:grid;grid-template-columns:1fr 1fr;
+  align-items:center;gap:60px;
+  max-width:1200px;margin:0 auto;
+  padding:100px 64px 80px;
+}
+.hero-badge{
+  display:inline-flex;align-items:center;gap:8px;
+  background:#4f6ef710;border:1px solid #4f6ef730;
+  border-radius:100px;padding:5px 14px;
+  font-size:.75rem;color:var(--accent3);
+  margin-bottom:24px;font-weight:500;letter-spacing:.3px;
+}
+.hero-badge-dot{
+  width:7px;height:7px;border-radius:50%;
+  background:var(--green);
+  animation:pulse-dot 2s ease-in-out infinite;
+}
+@keyframes pulse-dot{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.75)}}
 
-    input, select {
-      width: 100%;
-      padding: 10px 14px;
-      background: #0d1117;
-      border: 1px solid #30363d;
-      border-radius: 6px;
-      color: #e6edf3;
-      font-size: 1rem;
-      margin-bottom: 16px;
-    }
+.hero-left h1{
+  font-family:'Syne',sans-serif;
+  font-size:clamp(2.4rem,4.5vw,3.6rem);
+  font-weight:800;line-height:1.1;
+  letter-spacing:-2px;margin-bottom:20px;
+  color:var(--text);
+}
+.hero-left h1 .accent{color:var(--accent2)}
+.hero-left h1 .dim{color:var(--muted)}
 
-    input:focus, select:focus {
-      outline: none;
-      border-color: #58a6ff;
-    }
+.hero-sub{
+  font-size:1rem;color:var(--muted2);
+  line-height:1.8;margin-bottom:36px;
+  max-width:480px;font-weight:300;
+}
 
-    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.hero-actions{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.btn-primary{
+  background:var(--accent);color:#fff;border:none;
+  padding:13px 28px;border-radius:10px;
+  font-family:'Syne',sans-serif;font-size:.95rem;font-weight:600;
+  cursor:pointer;display:flex;align-items:center;gap:8px;
+  transition:background .2s,transform .15s;
+}
+.btn-primary:hover{background:var(--accent2);transform:translateY(-2px)}
+.btn-primary svg{width:17px;height:17px;stroke:#fff;fill:none;stroke-width:2.2}
+.btn-ghost{
+  background:transparent;color:var(--muted2);
+  border:1px solid var(--border2);
+  padding:13px 24px;border-radius:10px;
+  font-family:'Inter',sans-serif;font-size:.9rem;font-weight:400;
+  cursor:pointer;transition:border-color .2s,color .2s;
+}
+.btn-ghost:hover{border-color:var(--accent);color:var(--text)}
 
-    button {
-      width: 100%;
-      padding: 12px;
-      background: #238636;
-      color: white;
-      border: none;
-      border-radius: 6px;
-      font-size: 1rem;
-      cursor: pointer;
-      transition: background 0.2s;
-    }
+/* hero right — terminal */
+.hero-right{position:relative}
+.terminal{
+  background:var(--surface);
+  border:1px solid var(--border2);
+  border-radius:14px;overflow:hidden;
+  box-shadow:0 24px 64px rgba(0,0,0,.6);
+}
+.terminal::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,transparent,var(--accent),transparent);
+}
+.term-bar{
+  background:var(--surface2);
+  padding:12px 16px;
+  display:flex;align-items:center;gap:7px;
+  border-bottom:1px solid var(--border);
+}
+.tdot{width:11px;height:11px;border-radius:50%}
+.term-title{font-size:.72rem;color:var(--muted);margin-left:8px;font-family:'JetBrains Mono',monospace}
+.term-body{padding:20px 22px;font-family:'JetBrains Mono',monospace;font-size:.8rem;line-height:2}
+.tp{color:var(--accent)}.tc{color:var(--text)}.to{color:var(--muted)}
+.tg{color:var(--green)}.tr{color:var(--red)}.ta{color:var(--amber)}.tb{color:#60a5fa}.tv{color:#a78bfa}
+.tcursor{color:var(--accent);animation:blink-cur .8s step-end infinite}
+@keyframes blink-cur{0%,100%{opacity:1}50%{opacity:0}}
 
-    button:hover { background: #2ea043; }
-    button:disabled { background: #21262d; color: #8b949e; cursor: not-allowed; }
+/* glow under terminal */
+.terminal-glow{
+  position:absolute;bottom:-40px;left:50%;transform:translateX(-50%);
+  width:60%;height:80px;
+  background:radial-gradient(ellipse,rgba(79,110,247,.2) 0%,transparent 70%);
+  pointer-events:none;
+}
 
-    .score-card {
-      text-align: center;
-      padding: 32px;
-    }
+/* ───── STATS BAR ───── */
+.stats-section{
+  position:relative;z-index:5;
+  max-width:1200px;margin:0 auto;padding:0 64px 80px;
+}
+.stats-bar{
+  display:grid;grid-template-columns:repeat(4,1fr);
+  background:var(--surface);border:1px solid var(--border);border-radius:16px;
+  overflow:hidden;
+}
+.stat-item{
+  padding:28px 32px;text-align:center;
+  border-right:1px solid var(--border);
+}
+.stat-item:last-child{border-right:none}
+.stat-num{
+  font-family:'Syne',sans-serif;
+  font-size:2.2rem;font-weight:800;
+  color:var(--accent2);letter-spacing:-1px;
+  margin-bottom:4px;
+}
+.stat-label{font-size:.8rem;color:var(--muted);font-weight:400}
 
-    .score-number {
-      font-size: 4rem;
-      font-weight: bold;
-      color: #58a6ff;
-    }
+/* ───── FEATURES ───── */
+.features-section{
+  position:relative;z-index:5;
+  max-width:1200px;margin:0 auto;padding:0 64px 80px;
+}
+.section-eyebrow{
+  font-family:'JetBrains Mono',monospace;
+  font-size:.72rem;color:var(--accent2);
+  letter-spacing:2px;text-transform:uppercase;
+  margin-bottom:12px;
+}
+.section-title{
+  font-family:'Syne',sans-serif;
+  font-size:clamp(1.8rem,3.5vw,2.6rem);
+  font-weight:800;letter-spacing:-1.2px;
+  line-height:1.15;margin-bottom:14px;
+}
+.section-sub{
+  font-size:.95rem;color:var(--muted2);
+  line-height:1.75;max-width:480px;
+  font-weight:300;margin-bottom:52px;
+}
+.features-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.feat-card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:14px;padding:28px 24px;
+  transition:border-color .25s,transform .25s;
+  cursor:default;
+}
+.feat-card:hover{border-color:var(--border2);transform:translateY(-4px)}
+.feat-icon{
+  width:46px;height:46px;border-radius:11px;
+  background:#4f6ef712;border:1px solid #4f6ef725;
+  display:flex;align-items:center;justify-content:center;
+  margin-bottom:18px;
+}
+.feat-icon svg{width:22px;height:22px;stroke:var(--accent2);fill:none;stroke-width:1.8}
+.feat-title{font-family:'Syne',sans-serif;font-size:1rem;font-weight:700;margin-bottom:10px;color:var(--text)}
+.feat-desc{font-size:.85rem;color:var(--muted2);line-height:1.65;font-weight:300}
 
-    .score-label { font-size: 1.2rem; margin-top: 8px; }
+/* ───── HOW IT WORKS ───── */
+.how-section{
+  position:relative;z-index:5;
+  max-width:1200px;margin:0 auto;padding:0 64px 80px;
+}
+.steps-row{display:grid;grid-template-columns:repeat(4,1fr);gap:0;position:relative}
+.steps-row::after{
+  content:'';position:absolute;top:32px;left:12.5%;right:12.5%;
+  height:1px;background:var(--border);z-index:0;
+}
+.step{position:relative;z-index:1;text-align:center;padding:0 16px}
+.step-circle{
+  width:64px;height:64px;border-radius:50%;
+  background:var(--surface);border:1px solid var(--border2);
+  display:flex;align-items:center;justify-content:center;
+  margin:0 auto 20px;
+  font-family:'JetBrains Mono',monospace;font-size:.8rem;font-weight:500;
+  color:var(--accent2);
+}
+.step-title{font-family:'Syne',sans-serif;font-size:.95rem;font-weight:700;margin-bottom:8px;color:var(--text)}
+.step-desc{font-size:.82rem;color:var(--muted2);line-height:1.6;font-weight:300}
 
-    .risk-critical { color: #f85149; }
-    .risk-high     { color: #ff7b72; }
-    .risk-medium   { color: #e3b341; }
-    .risk-low      { color: #3fb950; }
-    .risk-info     { color: #8b949e; }
+/* ───── CTA ───── */
+.cta-section{
+  position:relative;z-index:5;
+  max-width:1200px;margin:0 auto;padding:0 64px 100px;
+}
+.cta-inner{
+  background:var(--surface);border:1px solid var(--border2);
+  border-radius:20px;padding:72px 80px;
+  display:grid;grid-template-columns:1fr auto;
+  align-items:center;gap:60px;
+  position:relative;overflow:hidden;
+}
+.cta-inner::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,transparent,var(--accent),transparent);
+}
+.cta-glow{
+  position:absolute;top:-80px;right:-80px;
+  width:320px;height:320px;
+  background:radial-gradient(circle,rgba(79,110,247,.08) 0%,transparent 60%);
+  pointer-events:none;
+}
+.cta-title{
+  font-family:'Syne',sans-serif;
+  font-size:clamp(1.8rem,3vw,2.4rem);
+  font-weight:800;letter-spacing:-1px;
+  line-height:1.2;margin-bottom:14px;
+}
+.cta-sub{font-size:.95rem;color:var(--muted2);line-height:1.7;font-weight:300}
 
-    .findings h3 {
-      margin-bottom: 12px;
-      padding-bottom: 8px;
-      border-bottom: 1px solid #30363d;
-    }
+/* ───── FOOTER ───── */
+footer{
+  position:relative;z-index:5;
+  border-top:1px solid var(--border);
+  padding:28px 64px;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.footer-logo{display:flex;align-items:center;gap:8px}
+.footer-logo-name{font-family:'Syne',sans-serif;font-size:.95rem;font-weight:700;color:var(--text)}
+.footer-copy{font-size:.8rem;color:var(--muted);margin-left:16px}
+.footer-right{font-size:.8rem;color:var(--muted)}
+.footer-right a{color:var(--accent2);text-decoration:none}
 
-    .finding-item {
-      background: #0d1117;
-      border-radius: 6px;
-      padding: 14px;
-      margin-bottom: 10px;
-      border-left: 3px solid #30363d;
-    }
-
-    .finding-item.critical { border-left-color: #f85149; }
-    .finding-item.high     { border-left-color: #ff7b72; }
-    .finding-item.medium   { border-left-color: #e3b341; }
-    .finding-item.low      { border-left-color: #3fb950; }
-
-    .finding-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 8px;
-    }
-
-    .finding-ip { font-weight: bold; font-family: monospace; }
-
-    .badge {
-      padding: 2px 10px;
-      border-radius: 12px;
-      font-size: 0.75rem;
-      font-weight: bold;
-    }
-
-    .badge-critical { background: #f8514930; color: #f85149; }
-    .badge-high     { background: #ff7b7230; color: #ff7b72; }
-    .badge-medium   { background: #e3b34130; color: #e3b341; }
-    .badge-low      { background: #3fb95030; color: #3fb950; }
-
-    .cve-list { margin-top: 8px; }
-    .cve-item { font-size: 0.85rem; color: #8b949e; margin-top: 4px; }
-    .cve-item span { color: #58a6ff; font-family: monospace; }
-
-    .status-bar {
-      text-align: center;
-      padding: 12px;
-      color: #8b949e;
-      font-size: 0.9rem;
-    }
-
-    .spinner {
-      display: inline-block;
-      width: 16px; height: 16px;
-      border: 2px solid #30363d;
-      border-top-color: #58a6ff;
-      border-radius: 50%;
-      animation: spin 0.8s linear infinite;
-      margin-right: 8px;
-      vertical-align: middle;
-    }
-
-    @keyframes spin { to { transform: rotate(360deg); } }
-
-    #results { display: none; }
-  </style>
+/* ───── SCROLL REVEAL ───── */
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .6s ease,transform .6s ease}
+.reveal.visible{opacity:1;transform:translateY(0)}
+</style>
 </head>
 <body>
-  <div class="container">
-    <header>
-      <h1>🔍 NetAudit</h1>
-      <p>Network Security Scanner for Small Businesses</p>
-    </header>
 
-    <div class="card">
-      <div>
-        <label>Target IP or Range</label>
-        <input type="text" id="target" placeholder="e.g. 192.168.1.1-192.168.1.254" />
-      </div>
-      <div class="row">
-        <div>
-          <label>Ports</label>
-          <input type="text" id="ports" value="22,80,443" />
-        </div>
-        <div>
-          <label>Workers</label>
-          <input type="number" id="workers" value="100" min="10" max="500" />
-        </div>
-      </div>
-      <button id="scanBtn" onclick="startScan()">Start Scan</button>
+<canvas id="bg-canvas"></canvas>
+
+<nav>
+  <a class="nav-logo" href="/>
+    <div class="nav-logo-icon">
+      <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
     </div>
+    <span class="nav-logo-name">NetAudit</span>
+  </a>
+  <div class="nav-links">
+    <a href="#features">Features</a>
+    <a href="#how">How it works</a>
+    <a href="#about">About</a>
+  </div>
+  <button class="nav-cta" onclick="window.location.href='/scan'">
+    <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m16.5 16.5 4 4"/></svg>
+    Launch Scanner
+  </button>
+</nav>
 
-    <div class="status-bar" id="status"></div>
-
-    <div id="results">
-      <div class="card score-card">
-        <div class="score-number" id="scoreNum">--</div>
-        <div class="score-label" id="scoreLabel"></div>
-        <div style="margin-top:16px; color:#8b949e; font-size:0.9rem" id="scoreMeta"></div>
-      </div>
-
-      <div class="card findings" id="findingsCard"></div>
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-left">
+    <div class="hero-badge">
+      <span class="hero-badge-dot"></span>
+      Real-time CVE vulnerability detection
+    </div>
+    <h1>
+      Know what's<br/>
+      <span class="accent">exposed</span> on<br/>
+      your <span class="dim">network</span>
+    </h1>
+    <p class="hero-sub">
+      NetAudit scans every device on your network, detects vulnerable services, and delivers a clear security report — built for small businesses in Kenya and across Africa.
+    </p>
+    <div class="hero-actions">
+      <button class="btn-primary" onclick="window.location.href='/scan'">
+        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m16.5 16.5 4 4"/></svg>
+        Start Free Scan
+      </button>
+      <button class="btn-ghost" onclick="document.getElementById('how').scrollIntoView({behavior:'smooth'})">
+        See how it works
+      </button>
     </div>
   </div>
+  <div class="hero-right">
+    <div class="terminal">
+      <div class="term-bar">
+        <div class="tdot" style="background:#ef4444"></div>
+        <div class="tdot" style="background:#f59e0b"></div>
+        <div class="tdot" style="background:#22c55e"></div>
+        <span class="term-title">netaudit — live scan</span>
+      </div>
+      <div class="term-body" id="term-body">
+        <div id="term-lines"></div>
+        <span class="tcursor" id="cursor">█</span>
+      </div>
+    </div>
+    <div class="terminal-glow"></div>
+  </div>
+</section>
 
-  <script>
-    async function startScan() {
-      const target  = document.getElementById('target').value.trim()
-      const ports   = document.getElementById('ports').value.trim()
-      const workers = parseInt(document.getElementById('workers').value)
-      const btn     = document.getElementById('scanBtn')
-      const status  = document.getElementById('status')
+<!-- STATS -->
+<div class="stats-section reveal">
+  <div class="stats-bar">
+    <div class="stat-item">
+      <div class="stat-num">254</div>
+      <div class="stat-label">IPs scanned per run</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">200k+</div>
+      <div class="stat-label">CVEs in database</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">100%</div>
+      <div class="stat-label">Free and open source</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">Go</div>
+      <div class="stat-label">Built with</div>
+    </div>
+  </div>
+</div>
 
-      if (!target) {
-        alert('Please enter a target IP or range')
-        return
-      }
+<!-- FEATURES -->
+<section class="features-section reveal" id="features">
+  <div class="section-eyebrow">// features</div>
+  <div class="section-title">Everything you need to<br/>secure your network</div>
+  <p class="section-sub">Purpose-built for small businesses who need real answers, not enterprise complexity.</p>
+  <div class="features-grid">
+    <div class="feat-card">
+      <div class="feat-icon">
+        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m16.5 16.5 4 4"/></svg>
+      </div>
+      <div class="feat-title">Concurrent port scanning</div>
+      <div class="feat-desc">Scan an entire /24 network across hundreds of ports in seconds using Go's goroutine worker pool with configurable concurrency.</div>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon">
+        <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      </div>
+      <div class="feat-title">Live CVE detection</div>
+      <div class="feat-desc">Every discovered service is automatically checked against the NIST National Vulnerability Database for known exploits and CVEs.</div>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon">
+        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+      </div>
+      <div class="feat-title">Device inventory</div>
+      <div class="feat-desc">Automatically identifies operating systems — Ubuntu, Debian, MikroTik RouterOS, embedded IoT — directly from service banners.</div>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon">
+        <svg viewBox="0 0 24 24"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+      </div>
+      <div class="feat-title">Risk scoring</div>
+      <div class="feat-desc">Every scan produces a 0–100 security score with critical, high, medium, and low severity breakdowns and plain-English fix advice.</div>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon">
+        <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+      </div>
+      <div class="feat-title">Network monitoring</div>
+      <div class="feat-desc">Continuously watch for new devices appearing or disappearing on your network, with automatic baseline comparison and instant alerts.</div>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon">
+        <svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+      </div>
+      <div class="feat-title">Web interface</div>
+      <div class="feat-desc">A clean browser-based UI means no command line knowledge required. Any staff member can trigger a scan and read the results.</div>
+    </div>
+  </div>
+</section>
 
-      btn.disabled = true
-      document.getElementById('results').style.display = 'none'
-      status.innerHTML = '<span class="spinner"></span> Scanning network... this may take a minute'
+<!-- HOW IT WORKS -->
+<section class="how-section reveal" id="how">
+  <div class="section-eyebrow">// how it works</div>
+  <div class="section-title">From scan to report<br/>in four steps</div>
+  <p class="section-sub">No configuration needed. Enter your network range and NetAudit handles everything else.</p>
+  <div class="steps-row">
+    <div class="step">
+      <div class="step-circle">01</div>
+      <div class="step-title">Enter target</div>
+      <div class="step-desc">Provide your IP range like 192.168.1.1–254 or a single host address</div>
+    </div>
+    <div class="step">
+      <div class="step-circle">02</div>
+      <div class="step-title">Scan ports</div>
+      <div class="step-desc">Hundreds of concurrent workers probe every host and open port simultaneously</div>
+    </div>
+    <div class="step">
+      <div class="step-circle">03</div>
+      <div class="step-title">Check CVEs</div>
+      <div class="step-desc">Service banners are parsed and matched against the NVD vulnerability database</div>
+    </div>
+    <div class="step">
+      <div class="step-circle">04</div>
+      <div class="step-title">Get report</div>
+      <div class="step-desc">A scored security report with per-device findings and remediation steps</div>
+    </div>
+  </div>
+</section>
 
-      try {
-        const resp = await fetch('/api/scan', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ target, ports, workers })
-        })
+<!-- CTA -->
+<section class="cta-section reveal" id="about">
+  <div class="cta-inner">
+    <div class="cta-glow"></div>
+    <div>
+      <div class="section-eyebrow">// get started</div>
+      <div class="cta-title">Your network has<br/>blind spots.<br/>Find them first.</div>
+      <p class="cta-sub">Most small businesses don't know what's exposed on their networks. NetAudit gives you the visibility of an enterprise security tool — completely free.</p>
+    </div>
+    <div>
+      <button class="btn-primary" style="padding:15px 36px;font-size:1rem" onclick="window.location.href='/scan'">
+        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m16.5 16.5 4 4"/></svg>
+        Launch the Scanner
+      </button>
+    </div>
+  </div>
+</section>
 
-        const data = await resp.json()
+<footer>
+  <div class="footer-logo">
+    <div class="nav-logo-icon" style="width:26px;height:26px;border-radius:6px">
+      <svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:#fff;fill:none;stroke-width:2.2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+    </div>
+    <span class="footer-logo-name">NetAudit</span>
+    <span class="footer-copy">Built at Zone01 Kisumu</span>
+  </div>
+  <div class="footer-right">Powered by <a href="https://golang.org">Go</a> + <a href="https://nvd.nist.gov">NVD API</a></div>
+</footer>
 
-        if (!data.success) {
-          status.textContent = '❌ Error: ' + data.error
-          return
-        }
+<script>
+/* ── particle canvas ── */
+const canvas = document.getElementById('bg-canvas');
+const ctx = canvas.getContext('2d');
+let W, H, pts = [];
 
-        renderReport(data.report)
-        status.textContent = '✅ Scan complete'
-        document.getElementById('results').style.display = 'block'
+function resize() {
+  W = canvas.width = window.innerWidth;
+  H = canvas.height = window.innerHeight;
+}
 
-      } catch (err) {
-        status.textContent = '❌ Request failed: ' + err.message
-      } finally {
-        btn.disabled = false
+function initPts() {
+  pts = [];
+  const n = Math.floor((W * H) / 16000);
+  for (let i = 0; i < n; i++) {
+    pts.push({
+      x: Math.random() * W, y: Math.random() * H,
+      vx: (Math.random() - .5) * .28, vy: (Math.random() - .5) * .28,
+      r: Math.random() * 1.4 + .4
+    });
+  }
+}
+
+function drawBg() {
+  ctx.clearRect(0, 0, W, H);
+  for (let i = 0; i < pts.length; i++) {
+    const p = pts[i];
+    p.x += p.vx; p.y += p.vy;
+    if (p.x < 0) p.x = W; if (p.x > W) p.x = 0;
+    if (p.y < 0) p.y = H; if (p.y > H) p.y = 0;
+    ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(79,110,247,.55)'; ctx.fill();
+    for (let j = i + 1; j < pts.length; j++) {
+      const q = pts[j];
+      const dx = p.x - q.x, dy = p.y - q.y, d = Math.sqrt(dx * dx + dy * dy);
+      if (d < 130) {
+        ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(q.x, q.y);
+        ctx.strokeStyle = `rgba(79,110,247,${.12 * (1 - d / 130)})`;
+        ctx.lineWidth = .5; ctx.stroke();
       }
     }
+  }
+  requestAnimationFrame(drawBg);
+}
 
-    function renderReport(r) {
-      const critical = r.Critical || []
-      const high     = r.High     || []
-      const medium   = r.Medium   || []
-      const low      = r.Low      || []
+resize(); initPts(); drawBg();
+window.addEventListener('resize', () => { resize(); initPts(); });
 
-      document.getElementById('scoreNum').textContent   = r.Score + '/100'
-      document.getElementById('scoreLabel').textContent = r.RiskLabel
-      document.getElementById('scoreMeta').textContent  =
-        `${r.Total} services checked · ${critical.length} critical · ${high.length} high · ${medium.length} medium`
+/* ── typewriter terminal ── */
+const termLines = [
+  { text: 'netaudit scan --target 192.168.89.0/24 --ports common', type: 'cmd' },
+  { text: '', type: 'blank' },
+  { text: 'Scanning 254 hosts across 20 ports with 200 workers...', type: 'out' },
+  { text: '', type: 'blank' },
+  { text: '[+] 192.168.89.254:22   OpenSSH_7.4            HIGH', type: 'high' },
+  { text: '[+] 192.168.89.165:22   dropbear_2015.67       HIGH', type: 'high' },
+  { text: '[+] 192.168.89.2:22     ROSSSH (MikroTik)      INFO', type: 'info' },
+  { text: '[+] 192.168.89.190:80   Apache/2.4.58          HIGH', type: 'high' },
+  { text: '[+] 192.168.89.12:80    Caddy                  LOW', type: 'low' },
+  { text: '', type: 'blank' },
+  { text: 'Security Score: 61/100  [MODERATE RISK]', type: 'score' },
+  { text: 'Critical: 2   High: 3   Medium: 5   Low: 8', type: 'out' },
+  { text: '', type: 'blank' },
+  { text: 'Report ready → open http://localhost:8080', type: 'link' },
+];
 
-      const card = document.getElementById('findingsCard')
-      card.innerHTML = '<h3>Findings</h3>'
+function renderLine(l) {
+  if (l.type === 'blank') return '<div style="height:.4rem"></div>';
+  if (l.type === 'cmd') return `<div><span class="tp">$ </span><span class="tc">${l.text}</span></div>`;
+  if (l.type === 'out') return `<div class="to">${l.text}</div>`;
+  if (l.type === 'high') {
+    const parts = l.text.split(/\s{2,}/);
+    return `<div><span class="tg">${parts[0]}</span>  <span class="tv">${parts[1]||''}</span>  <span class="to">${parts[2]||''}</span>  <span class="tr">${parts[3]||''}</span></div>`;
+  }
+  if (l.type === 'info') {
+    const parts = l.text.split(/\s{2,}/);
+    return `<div><span class="tg">${parts[0]}</span>  <span class="tv">${parts[1]||''}</span>  <span class="to">${parts[2]||''}</span>  <span class="tb">${parts[3]||''}</span></div>`;
+  }
+  if (l.type === 'low') {
+    const parts = l.text.split(/\s{2,}/);
+    return `<div><span class="tg">${parts[0]}</span>  <span class="tv">${parts[1]||''}</span>  <span class="to">${parts[2]||''}</span>  <span style="color:var(--green)">${parts[3]||''}</span></div>`;
+  }
+  if (l.type === 'score') return `<div><span class="tg">Security Score: </span><span class="ta">61/100</span>  <span class="ta">[MODERATE RISK]</span></div>`;
+  if (l.type === 'link') return `<div class="tb">${l.text}</div>`;
+  return `<div class="to">${l.text}</div>`;
+}
 
-      const all = [
-        ...critical.map(f => ({...f, risk: 'critical'})),
-        ...high.map(f     => ({...f, risk: 'high'})),
-        ...medium.map(f   => ({...f, risk: 'medium'})),
-        ...low.map(f      => ({...f, risk: 'low'})),
-      ]
+const linesEl = document.getElementById('term-lines');
+const cursorEl = document.getElementById('cursor');
+let li = 0;
 
-      if (all.length === 0) {
-        card.innerHTML += '<p style="color:#8b949e; margin-top:12px">No vulnerabilities found.</p>'
-        return
-      }
+function addLine() {
+  if (li >= termLines.length) { cursorEl.style.display = 'none'; return; }
+  linesEl.innerHTML += renderLine(termLines[li++]);
+  setTimeout(addLine, li === 1 ? 600 : termLines[li - 1].type === 'blank' ? 80 : Math.random() * 160 + 60);
+}
+setTimeout(addLine, 900);
 
-      all.forEach(f => {
-        const cveHtml = (f.CVEs || []).map(c =>
-          `<div class="cve-item"><span>${c.ID}</span> [${c.Score}] — ${c.Description}</div>`
-        ).join('')
-
-        card.innerHTML += `
-          <div class="finding-item ${f.risk}">
-            <div class="finding-header">
-              <span class="finding-ip">${f.IP}:${f.Port} — ${f.Service} ${f.Version}</span>
-              <span class="badge badge-${f.risk}">${f.risk.toUpperCase()}</span>
-            </div>
-            <div class="cve-list">${cveHtml}</div>
-          </div>`
-      })
-    }
-  </script>
+/* ── scroll reveal ── */
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: .15 });
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+</script>
 </body>
 </html>
