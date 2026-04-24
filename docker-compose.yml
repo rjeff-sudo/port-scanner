@@ -1,0 +1,22 @@
+version: '3.9'
+
+services:
+  netaudit:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: netaudit
+    ports:
+      - "8080:8080"
+    environment:
+      PORT: 8080
+    volumes:
+      # Mount static files for live development (optional)
+      - ./web/static:/app/web/static
+    restart: unless-stopped
+    networks:
+      - netaudit-network
+
+networks:
+  netaudit-network:
+    driver: bridge

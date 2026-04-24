@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	"port-scanner/scanner"
+	"netaudit/scanner"
 	"github.com/fatih/color"
 )
 

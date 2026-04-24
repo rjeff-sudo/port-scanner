@@ -5,7 +5,7 @@ import (
 	"os"
 	"time"
 
-	"port-scanner/scanner"
+	"netaudit/scanner"
 )
 
 // Snapshot represents the network state at a point in time

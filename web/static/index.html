@@ -6,7 +6,7 @@
 <title>NetAudit — Network Security Scanner</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&family=Inter:wght@300;400;500&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Source+Code+Pro:wght@400;500;600;700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet"/>
 <link rel="stylesheet" href="/static/index.css">
 </head>
 <body>
@@ -33,163 +33,183 @@
 
 <!-- HERO -->
 <section class="hero">
-  <div class="hero-left">
-    <div class="hero-badge">
-      <span class="hero-badge-dot"></span>
-      Real-time CVE vulnerability detection
-    </div>
-    <h1>
-      Know what's<br/>
-      <span class="accent">exposed</span> on<br/>
-      your <span class="dim">network</span>
+  <div class="hero-content">
+    <div class="hero-pretitle">Complete Network Visibility</div>
+    <h1 class="hero-title">
+      Discover threats<br/>
+      <span class="hero-accent">before they strike</span>
     </h1>
-    <p class="hero-sub">
-      NetAudit scans every device on your network, detects vulnerable services, and delivers a clear security report — built for small businesses in Kenya and across Africa.
+    <p class="hero-description">
+      Real-time vulnerability scanning for your entire network. Identify exposed devices, detect vulnerable services, and understand your security posture in minutes—not hours.
     </p>
-    <div class="hero-actions">
-      <button class="btn-primary" onclick="window.location.href='/scan'">
-        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m16.5 16.5 4 4"/></svg>
-        Start Free Scan
+    <div class="hero-cta-group">
+      <button class="btn-primary-lg" onclick="window.location.href='/scan'">
+        <span>Start Scanning Now</span>
+        <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
       </button>
-      <button class="btn-ghost" onclick="document.getElementById('how').scrollIntoView({behavior:'smooth'})">
-        See how it works
+      <button class="btn-secondary-lg" onclick="document.getElementById('features').scrollIntoView({behavior:'smooth'})">
+        Learn More
       </button>
+    </div>
+    <div class="hero-trust">
+      <span>Trusted by security teams across Africa</span>
     </div>
   </div>
-  <div class="hero-right">
-    <div class="terminal">
-      <div class="term-bar">
-        <div class="tdot" style="background:#ef4444"></div>
-        <div class="tdot" style="background:#f59e0b"></div>
-        <div class="tdot" style="background:#22c55e"></div>
-        <span class="term-title">netaudit — live scan</span>
-      </div>
-      <div class="term-body" id="term-body">
-        <div id="term-lines"></div>
-        <span class="tcursor" id="cursor">█</span>
+  <div class="hero-visual">
+    <div class="hero-image-frame">
+      <div class="hero-scan-visual">
+        <div class="scan-item scan-item-1"></div>
+        <div class="scan-item scan-item-2"></div>
+        <div class="scan-item scan-item-3"></div>
+        <div class="scan-item scan-item-4"></div>
       </div>
     </div>
-    <div class="terminal-glow"></div>
   </div>
 </section>
 
 <!-- STATS -->
-<div class="stats-section reveal">
-  <div class="stats-bar">
-    <div class="stat-item">
-      <div class="stat-num">254</div>
-      <div class="stat-label">IPs scanned per run</div>
+<section class="stats-section">
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-icon">📡</div>
+      <div class="stat-value">254</div>
+      <div class="stat-text">IPs in one scan</div>
     </div>
-    <div class="stat-item">
-      <div class="stat-num">200k+</div>
-      <div class="stat-label">CVEs in database</div>
+    <div class="stat-card">
+      <div class="stat-icon">🛡️</div>
+      <div class="stat-value">200k+</div>
+      <div class="stat-text">CVE records</div>
     </div>
-    <div class="stat-item">
-      <div class="stat-num">100%</div>
-      <div class="stat-label">Free and open source</div>
+    <div class="stat-card">
+      <div class="stat-icon">⚡</div>
+      <div class="stat-value">&lt;1m</div>
+      <div class="stat-text">Average scan time</div>
     </div>
-    <div class="stat-item">
-      <div class="stat-num">Go</div>
-      <div class="stat-label">Built with</div>
+    <div class="stat-card">
+      <div class="stat-icon">✓</div>
+      <div class="stat-value">Free</div>
+      <div class="stat-text">Open source forever</div>
     </div>
   </div>
-</div>
+</section>
 
 <!-- FEATURES -->
-<section class="features-section reveal" id="features">
-  <div class="section-eyebrow">// features</div>
-  <div class="section-title">Everything you need to<br/>secure your network</div>
-  <p class="section-sub">Purpose-built for small businesses who need real answers, not enterprise complexity.</p>
-  <div class="features-grid">
-    <div class="feat-card">
-      <div class="feat-icon">
-        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m16.5 16.5 4 4"/></svg>
+<section class="features-section" id="features">
+  <div class="section-header">
+    <h2>Powerful capabilities built for real networks</h2>
+    <p>Everything you need to protect your infrastructure</p>
+  </div>
+  
+  <div class="features-list">
+    <div class="feature-row">
+      <div class="feature-content">
+        <h3>Blazing-fast concurrent scanning</h3>
+        <p>Scan entire /24 networks across hundreds of ports simultaneously. Our Go-based engine uses worker pools to scan thousands of IPs efficiently without overwhelming your network.</p>
+        <ul class="feature-bullets">
+          <li>Configurable worker threads</li>
+          <li>Automatic rate limiting</li>
+          <li>Completes in seconds, not hours</li>
+        </ul>
       </div>
-      <div class="feat-title">Concurrent port scanning</div>
-      <div class="feat-desc">Scan an entire /24 network across hundreds of ports in seconds using Go's goroutine worker pool with configurable concurrency.</div>
+      <div class="feature-badge">01</div>
     </div>
-    <div class="feat-card">
-      <div class="feat-icon">
-        <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+
+    <div class="feature-row feature-row-alt">
+      <div class="feature-badge">02</div>
+      <div class="feature-content">
+        <h3>Real-time vulnerability detection</h3>
+        <p>Every discovered service is instantly cross-referenced against the NIST CVE database. Know immediately which of your devices are at risk.</p>
+        <ul class="feature-bullets">
+          <li>NIST National Vulnerability Database</li>
+          <li>Severity scoring (critical/high/medium/low)</li>
+          <li>Exploit availability detection</li>
+        </ul>
       </div>
-      <div class="feat-title">Live CVE detection</div>
-      <div class="feat-desc">Every discovered service is automatically checked against the NIST National Vulnerability Database for known exploits and CVEs.</div>
     </div>
-    <div class="feat-card">
-      <div class="feat-icon">
-        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+
+    <div class="feature-row">
+      <div class="feature-content">
+        <h3>Automatic OS fingerprinting</h3>
+        <p>Our system identifies Windows, Linux, MikroTik, and IoT devices directly from service banners. Build an accurate inventory of every device on your network.</p>
+        <ul class="feature-bullets">
+          <li>Service banner analysis</li>
+          <li>Built-in OS signature database</li>
+          <li>Unknown device classification</li>
+        </ul>
       </div>
-      <div class="feat-title">Device inventory</div>
-      <div class="feat-desc">Automatically identifies operating systems — Ubuntu, Debian, MikroTik RouterOS, embedded IoT — directly from service banners.</div>
+      <div class="feature-badge">03</div>
     </div>
-    <div class="feat-card">
-      <div class="feat-icon">
-        <svg viewBox="0 0 24 24"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+
+    <div class="feature-row feature-row-alt">
+      <div class="feature-badge">04</div>
+      <div class="feature-content">
+        <h3>Intelligent risk scoring</h3>
+        <p>Not just a list of findings—a clear 0–100 security score with actionable remediation advice for your team. Understand your actual risk level.</p>
+        <ul class="feature-bullets">
+          <li>Weighted severity calculation</li>
+          <li>Plain-English recommendations</li>
+          <li>Historical trend tracking</li>
+        </ul>
       </div>
-      <div class="feat-title">Risk scoring</div>
-      <div class="feat-desc">Every scan produces a 0–100 security score with critical, high, medium, and low severity breakdowns and plain-English fix advice.</div>
     </div>
-    <div class="feat-card">
-      <div class="feat-icon">
-        <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+
+    <div class="feature-row">
+      <div class="feature-content">
+        <h3>Continuous network monitoring</h3>
+        <p>Run periodic scans and get alerts when new devices appear or vulnerable services come online. Catch rogue devices immediately.</p>
+        <ul class="feature-bullets">
+          <li>Scheduled scanning intervals</li>
+          <li>Automatic baseline comparison</li>
+          <li>Change notifications</li>
+        </ul>
       </div>
-      <div class="feat-title">Network monitoring</div>
-      <div class="feat-desc">Continuously watch for new devices appearing or disappearing on your network, with automatic baseline comparison and instant alerts.</div>
-    </div>
-    <div class="feat-card">
-      <div class="feat-icon">
-        <svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
-      </div>
-      <div class="feat-title">Web interface</div>
-      <div class="feat-desc">A clean browser-based UI means no command line knowledge required. Any staff member can trigger a scan and read the results.</div>
+      <div class="feature-badge">05</div>
     </div>
   </div>
 </section>
 
 <!-- HOW IT WORKS -->
-<section class="how-section reveal" id="how">
-  <div class="section-eyebrow">// how it works</div>
-  <div class="section-title">From scan to report<br/>in four steps</div>
-  <p class="section-sub">No configuration needed. Enter your network range and NetAudit handles everything else.</p>
-  <div class="steps-row">
-    <div class="step">
-      <div class="step-circle">01</div>
-      <div class="step-title">Enter target</div>
-      <div class="step-desc">Provide your IP range like 192.168.1.1–254 or a single host address</div>
+<section class="how-section" id="how">
+  <div class="section-header">
+    <h2>Three steps to complete visibility</h2>
+    <p>No complex configuration. Just scan.</p>
+  </div>
+  <div class="workflow">
+    <div class="workflow-step">
+      <div class="workflow-number">1</div>
+      <div class="workflow-content">
+        <h4>Enter your network</h4>
+        <p>Specify an IP range (e.g., 192.168.1.1-254) or single host. NetAudit handles any size network.</p>
+      </div>
     </div>
-    <div class="step">
-      <div class="step-circle">02</div>
-      <div class="step-title">Scan ports</div>
-      <div class="step-desc">Hundreds of concurrent workers probe every host and open port simultaneously</div>
+    <div class="workflow-arrow">→</div>
+    <div class="workflow-step">
+      <div class="workflow-number">2</div>
+      <div class="workflow-content">
+        <h4>We scan & analyze</h4>
+        <p>Concurrent port scanning, service detection, OS fingerprinting, and instant CVE lookups happen in real-time.</p>
+      </div>
     </div>
-    <div class="step">
-      <div class="step-circle">03</div>
-      <div class="step-title">Check CVEs</div>
-      <div class="step-desc">Service banners are parsed and matched against the NVD vulnerability database</div>
-    </div>
-    <div class="step">
-      <div class="step-circle">04</div>
-      <div class="step-title">Get report</div>
-      <div class="step-desc">A scored security report with per-device findings and remediation steps</div>
+    <div class="workflow-arrow">→</div>
+    <div class="workflow-step">
+      <div class="workflow-number">3</div>
+      <div class="workflow-content">
+        <h4>Get your report</h4>
+        <p>Security score, device inventory, vulnerability findings, and fix recommendations—all in one view.</p>
+      </div>
     </div>
   </div>
 </section>
 
 <!-- CTA -->
-<section class="cta-section reveal" id="about">
-  <div class="cta-inner">
-    <div class="cta-glow"></div>
-    <div>
-      <div class="section-eyebrow">// get started</div>
-      <div class="cta-title">Your network has<br/>blind spots.<br/>Find them first.</div>
-      <p class="cta-sub">Most small businesses don't know what's exposed on their networks. NetAudit gives you the visibility of an enterprise security tool — completely free.</p>
-    </div>
-    <div>
-      <button class="btn-primary" style="padding:15px 36px;font-size:1rem" onclick="window.location.href='/scan'">
-        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m16.5 16.5 4 4"/></svg>
-        Launch the Scanner
-      </button>
-    </div>
+<section class="cta-section" id="about">
+  <div class="cta-box">
+    <h2>Your network. Your security. Your responsibility.</h2>
+    <p>Most small businesses have no idea what's exposed on their networks. NetAudit changes that in 60 seconds.</p>
+    <button class="btn-primary-lg" onclick="window.location.href='/scan'">
+      <span>Scan Your Network Free</span>
+      <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </button>
   </div>
 </section>
 
@@ -199,7 +219,6 @@
       <svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:#fff;fill:none;stroke-width:2.2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
     </div>
     <span class="footer-logo-name">NetAudit</span>
-    <span class="footer-copy">Built at Zone01 Kisumu</span>
   </div>
   <div class="footer-right">Powered by <a href="https://golang.org">Go</a> + <a href="https://nvd.nist.gov">NVD API</a></div>
 </footer>

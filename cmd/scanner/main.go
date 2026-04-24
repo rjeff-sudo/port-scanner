@@ -8,7 +8,7 @@ import (
 	"strings"
 	"time"
 
-	"port-scanner/scanner"
+	"netaudit/scanner"
 )
 
 func parsePorts(input string) ([]int, error) {

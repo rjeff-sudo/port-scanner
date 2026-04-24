@@ -6,8 +6,8 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"port-scanner/audit"
-	"port-scanner/scanner"
+	"netaudit/audit"
+	"netaudit/scanner"
 	"time"
 )
 

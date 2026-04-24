@@ -1,4 +1,4 @@
-module port-scanner
+module netaudit
 
 go 1.25.0
 

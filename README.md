@@ -1,4 +1,4 @@
-# Port Scanner & Network Monitor
+# NetAudit — Network Security Scanner
 
 A concurrent TCP port scanner and continuous network monitor built in Go. Scans a range of IPs and ports, detects open ones using TCP connect scanning, grabs service banners, performs OS detection, and reports results in a clean colored table. Built as part of learning systems programming and network tooling in Go.
 
@@ -8,8 +8,8 @@ A concurrent TCP port scanner and continuous network monitor built in Go. Scans 
 
 This project contains two separate binaries:
 
-- **port-scanner** — scans a network once and exits
-- **network-monitor** — continuously monitors a network and alerts on changes
+- **netaudit** — scans a network once and exits
+- **netaudit-monitor** — continuously monitors a network and alerts on changes
 
 ---
 
@@ -33,10 +33,10 @@ This project contains two separate binaries:
 ## Project Structure
 
 ```
-port-scanner/
+netaudit/
 ├── cmd/
 │   ├── scanner/
-│   │   └── main.go       → port scanner entry point
+│   │   └── main.go       → network scanner entry point
 │   └── monitor/
 │       └── main.go       → network monitor entry point
 ├── scanner/
@@ -68,8 +68,8 @@ port-scanner/
 
 ```bash
 # Clone the repo
-git clone https://github.com/rjeff-sudo/port-scanner.git
-cd port-scanner
+git clone https://github.com/rjeff-sudo/netaudit.git
+cd netaudit
 
 # Fix GOPATH if needed (especially on shared/lab machines)
 export GOPATH=$HOME/go
@@ -82,8 +82,8 @@ source ~/.bashrc
 
 # Build both tools
 go build ./...
-go build -o port-scanner ./cmd/scanner
-go build -o network-monitor ./cmd/monitor
+go build -o netaudit ./cmd/scanner
+go build -o netaudit-monitor ./cmd/monitor
 ```
 
 Go will automatically download all dependencies on first build.
@@ -92,33 +92,33 @@ Go will automatically download all dependencies on first build.
 
 ## Usage
 
-### Port Scanner
+### Scanner
 
 ```bash
 # Scan a single machine
-./port-scanner -target 192.168.1.1 -ports 22,80,443 -workers 100
+./netaudit -target 192.168.1.1 -ports 22,80,443 -workers 100
 
 # Scan a network range
-./port-scanner -target 192.168.1.1-192.168.1.254 -ports 22,80,443 -workers 200
+./netaudit -target 192.168.1.1-192.168.1.254 -ports 22,80,443 -workers 200
 
 # Use a port profile
-./port-scanner -target 192.168.1.1-192.168.1.254 -ports common
-./port-scanner -target 192.168.1.1-192.168.1.254 -ports web
-./port-scanner -target 192.168.1.1-192.168.1.254 -ports db
-./port-scanner -target 192.168.1.1-192.168.1.254 -ports ssh
+./netaudit -target 192.168.1.1-192.168.1.254 -ports common
+./netaudit -target 192.168.1.1-192.168.1.254 -ports web
+./netaudit -target 192.168.1.1-192.168.1.254 -ports db
+./netaudit -target 192.168.1.1-192.168.1.254 -ports ssh
 
 # Scan all ports on a single machine
-./port-scanner -target 192.168.1.1 -ports 1-65535 -workers 500
+./netaudit -target 192.168.1.1 -ports 1-65535 -workers 500
 
 # Rate limited scan
-./port-scanner -target 192.168.1.1-192.168.1.254 -ports common -rate 100
+./netaudit -target 192.168.1.1-192.168.1.254 -ports common -rate 100
 
 # Save results to file
-./port-scanner -target 192.168.1.1-192.168.1.254 -ports common -output results.json
-./port-scanner -target 192.168.1.1-192.168.1.254 -ports common -output results.csv
+./netaudit -target 192.168.1.1-192.168.1.254 -ports common -output results.json
+./netaudit -target 192.168.1.1-192.168.1.254 -ports common -output results.csv
 
 # Verbose mode (show closed ports)
-./port-scanner -target 192.168.1.1 -ports common -v
+./netaudit -target 192.168.1.1 -ports common -v
 ```
 
 #### Port Scanner Flags
@@ -150,16 +150,16 @@ Go will automatically download all dependencies on first build.
 
 ```bash
 # Monitor a network every 60 seconds
-./network-monitor -target 192.168.1.1-192.168.1.254 -ports 22,80,443 -workers 200 -interval 60
+./netaudit-monitor -target 192.168.1.1-192.168.1.254 -ports 22,80,443 -workers 200 -interval 60
 
 # Monitor every 20 seconds
-./network-monitor -target 192.168.1.1-192.168.1.254 -ports 22,80,443 -workers 200 -interval 20
+./netaudit-monitor -target 192.168.1.1-192.168.1.254 -ports 22,80,443 -workers 200 -interval 20
 
 # Use a custom state file
-./network-monitor -target 192.168.1.1-192.168.1.254 -ports 22,80,443 -state office.json
+./netaudit-monitor -target 192.168.1.1-192.168.1.254 -ports 22,80,443 -state office.json
 
 # Monitor a different network (state files are auto-named per network)
-./network-monitor -target 10.0.0.1-10.0.0.254 -ports 22,80,443 -workers 200 -interval 60
+./netaudit-monitor -target 10.0.0.1-10.0.0.254 -ports 22,80,443 -workers 200 -interval 60
 ```
 
 #### Network Monitor Flags
